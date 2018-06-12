@@ -1,0 +1,22 @@
+<launch>
+
+  <arg name="velocity_factor" default="1.0" />
+
+  <rosparam command="delete" param="robot_calibration" />
+  <node pkg="robot_calibration" type="calibrate" name="robot_calibration"
+        args="$(find pr2_robot_calibration)/config/left_checkerboard_poses.bag"
+        output="screen" required="true">
+    <param name="velocity_factor" value="$(arg velocity_factor)" />
+    <rosparam file="$(find pr2_robot_calibration)/config/capture_left_checkerboard.yaml" command="load" />
+    <rosparam file="$(find pr2_robot_calibration)/config/calibrate_left.yaml" command="load" />
+    <remap from="/head_camera/depth/camera_info" to="/head_mount_kinect/depth_registered/camera_info" />
+  </node>
+
+  <node pkg="rosbag" type="record" name="calibration_bagger" output="screen"
+        args="--bz2 -o /tmp/pr2_robot_calibration/calibration_data calibration_data robot_description" >
+    <param name="mkdir_tmp" command="mkdir -m 777 -p /tmp/pr2_robot_calibration" />
+  </node>
+
+  <include file="$(find pr2_robot_calibration)/launch/move_group.launch" />
+  
+</launch>

@@ -1,0 +1,60 @@
+verbose: true
+base_link: torso_lift_link
+models:
+ - name: right_arm
+   type: chain
+   frame: r_wrist_roll_link
+ - name: left_arm
+   type: chain
+   frame: l_wrist_roll_link
+ - name: head_mount_kinect
+   type: camera3d
+   frame: head_mount_kinect_rgb_optical_frame
+   topic: /head_mount_kinect/depth_registered/points
+free_params:
+ - r_shoulder_pan_joint
+ - r_shoulder_lift_joint
+ - r_upper_arm_roll_joint
+ - r_elbow_flex_joint
+ - r_forearm_roll_joint
+ - r_wrist_flex_joint
+ - r_wrist_roll_joint
+ - head_tilt_joint
+ - head_pan_joint
+free_frames:
+ - name: head_mount_kinect_rgb_joint
+   x: true
+   y: true
+   z: true
+   roll: true
+   pitch: true
+   yaw: true
+ - name: head_pan_joint
+   x: true
+   y: true
+   z: true
+   roll: true
+   pitch: true
+   yaw: true
+ - name: checkerboard
+   x: true
+   y: false
+   z: true
+   roll: false
+   pitch: true
+   yaw: false
+error_blocks:
+ - name: hand_eye_right
+   type: camera3d_to_arm
+   camera: head_mount_kinect
+   arm: right_arm
+ - name: hand_eye_left
+   type: camera3d_to_arm
+   camera: head_mount_kinect
+   arm: left_arm
+ - name: restrict_camera
+   type: outrageous
+   param: head_mount_kinect_rgb_joint
+   joint_scale: 0.0
+   position_scale: 0.1
+   rotation_scale: 0.1
